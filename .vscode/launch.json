@@ -1,0 +1,56 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug UI",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Debug API",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/packages/server",
+      "program": "${workspaceRoot}/packages/server/src/index.ts",
+      "outFiles": [
+        "${workspaceRoot}/packages/server/dist/**/*.js"
+      ],
+      "sourceMaps": true
+    },
+    {
+      "name": "Debug UI Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
+      "args": [
+        "test", "--runInBand",
+        "--no-cache", "--watchAll=false",
+      ],
+      "cwd": "${workspaceRoot}/packages/client",
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": { "CI": "true" },
+      "disableOptimisticBPs": true
+    },
+    {
+      "name": "Debug API Tests",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/packages/server",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/.bin/jest",
+        "--runInBand"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "port": 9229
+    }
+  ]
+}

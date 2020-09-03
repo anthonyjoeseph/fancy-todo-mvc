@@ -1,0 +1,15 @@
+{
+   "private": true,
+   "name": "fancy-todomvc",
+   "workspaces": [
+      "packages/*"
+   ],
+   "scripts": {
+      "client": "yarn workspace client start",
+      "server": "yarn workspace server start:dev",
+      "start": "concurrently --kill-others-on-fail \"yarn server\"  \"yarn client\""
+   },
+   "dependencies": {
+      "concurrently": "^5.3.0"
+   }
+}
