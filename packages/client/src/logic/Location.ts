@@ -1,33 +1,27 @@
-import { end, lit } from 'fp-ts-routing';
-import { routingFromMatches3 } from 'morphic-ts-routing';
+import { end, lit, int } from 'fp-ts-routing';
+import { routingFromMatches5 } from 'morphic-ts-routing';
 import { ADTType } from '@morphic-ts/adt';
-import { VisibilityFilter } from './AppState';
 
 export const {
   parse,
   format,
   adt: Location,
-} = routingFromMatches3(
+} = routingFromMatches5(
   ['Landing', end],
-  ['Active', lit('active').then(end)],
-  ['Completed', lit('completed').then(end)],
+  ['Login', lit('login').then(end)],
+  ['AllTodos', int('userid').then(end)],
+  ['ActiveTodos', int('userid').then(lit('active')).then(end)],
+  ['CompletedTodos', int('userid').then(lit('completed')).then(end)],
 );
 export type Location = ADTType<typeof Location>
 
-export const routeToVisibilityFilter = Location.matchStrict<VisibilityFilter>({
-  Landing: () => 'SHOW_ALL',
-  Active: () => 'SHOW_ACTIVE',
-  Completed: () => 'SHOW_COMPLETED',
-  NotFound: () => 'SHOW_ALL',
-})
+export const LoggedOutLocation = Location.select(['NotFound', 'Landing', 'Login'])
+export type LoggedOutLocation = ADTType<typeof LoggedOutLocation>
 
-export const visibilityFilterToRoute = (visibility: VisibilityFilter): Location => {
-  switch (visibility) {
-    case 'SHOW_ALL':
-      return Location.of.Landing({ value: {} });
-    case 'SHOW_ACTIVE':
-      return Location.of.Active({ value: {} });
-    case 'SHOW_COMPLETED':
-      return Location.of.Completed({ value: {} });
-  }
-}
+export const LoggedInLocation = Location.select(['AllTodos', 'ActiveTodos', 'CompletedTodos'])
+export type LoggedInLocation = ADTType<typeof LoggedInLocation>
+
+export const ExistingLocation = Location.exclude(['NotFound'])
+export type ExistingLocation = ADTType<typeof ExistingLocation>
+
+export const isLoggedOutLocation = (l: Location): l is LoggedOutLocation => LoggedOutLocation.verified(l as LoggedOutLocation) 

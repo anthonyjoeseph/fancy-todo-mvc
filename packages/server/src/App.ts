@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/user', UserRouter);
-app.use('/api/todo', TodoRouter);
+app.use('/api', UserRouter);
+app.use('/api', TodoRouter);
 
 export default app

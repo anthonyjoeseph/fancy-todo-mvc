@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { User } from '../../../../../shared/model';
+import addTodo from '../../../logic/actions/AddTodo'
+import { AppStateContext } from '../../../logic/AppState';
 
 const AddTodo = ({
-  addTodo,
+  user,
 }: {
-  addTodo: (text: string) => void;
+  user: User
 }) => {
   const [text, setText] = useState('');
+  const [appState, setAppState] = useContext(AppStateContext)
   return (
     <div>
       <form
@@ -14,7 +18,12 @@ const AddTodo = ({
           if (!text.trim()) {
             return;
           }
-          addTodo(text);
+          addTodo(
+            text,
+            user,
+            appState,
+            setAppState,
+          );
         }}
       >
         <input
