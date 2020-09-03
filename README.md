@@ -2,7 +2,7 @@
 
 The goal of this project is to show the advantages of using fp-ts & friends vs a more traditional approach to building a web app.
 
-Since lodash solutions are often simpler than fp-ts based solutions for smaller problems, it's necessary to show a larger application to see the benefits.
+Since lodash solutions are often simpler than fp-ts based solutions for smaller problems, it's necessary to show a larger application to understand benefits.
 
 The idea is to show the simplest example of a project with tangible benefits from an fp approach. This provides a point of comparison as well as a document of best practices.
 
@@ -24,7 +24,7 @@ Counter example will feature [lodash](https://github.com/lodash/lodash) and [rea
 
 Users [fp-ts](https://github.com/gcanti/fp-ts), [express](https://github.com/expressjs/express), [hyper-ts](https://github.com/gcanti/hyper-ts), [pg-promise](https://github.com/vitaly-t/pg-promise), [supertest](https://github.com/visionmedia/supertest), [jest](https://github.com/facebook/jest)
 
-Backed by a postgres server. SQL migrations with node-flywaydb
+Backed by a postgres server. SQL migrations with [node-flywaydb](https://github.com/markgardner/node-flywaydb)
 
 # Shared btwn client and server
 
