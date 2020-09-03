@@ -1,3 +1,5 @@
+# Fancy TODO-mvc
+
 The goal of this project is to show the advantages of using fp-ts & friends vs a more traditional approach to building a web app.
 
 Since lodash solutions are often simpler than fp-ts based solutions for smaller problems, it's necessary to show a larger application to see the benefits.
