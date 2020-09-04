@@ -32,6 +32,8 @@ Backed by a postgres server. SQL migrations with [node-flywaydb](https://github.
 
 # Dev Environment
 
+It's a [PERN stack](https://www.geeksforgeeks.org/what-is-pern-stack/)
+
 This is a Typescript ui & api monorepo based on the structure outlined on this [smashing magazine article](https://www.smashingmagazine.com/2019/07/yarn-workspaces-organize-project-codebase-pro/)
 
 The client was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
