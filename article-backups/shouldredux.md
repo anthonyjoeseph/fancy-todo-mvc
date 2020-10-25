@@ -31,7 +31,7 @@ For simplicity's sake, we'll be talking about `redux` as it relates to `react` f
 
 `redux` is not the only popular state management library. Here's an overview of redux as compared to its major alternatives
 
-## redux 
+## [redux](https://redux.js.org/) 
 
 Pros:
 
@@ -50,13 +50,14 @@ Cons:
 - colocated state is kinda the whole point of react (though you're certainly still allowed to use hooks for textfield input etc)
 - adding new behavior is cumbersome
 - applications with many different behaviors can become unwieldy
-- the debug system is a bit arbitrary unless paired with a hot reloader
+- the debug system is a bit arbitrary unless [paired with a hot reloader]()
 
 ## [recoil](https://recoiljs.org/)
 
 Pros:
 
-- memoized changes of shared state across a variable number of components
+- variably memoized changes of shared state across deeply nested components
+- good for projects that render many expensive & memoiz-able components, e.g. spreadsheets or flowcharts
 
 Cons:
 
@@ -168,7 +169,7 @@ const reducer = (state: State, action: Action): State => {
 
 We can't return `newState` because reducers are synchronous. We'll need an async middleware to handle this case. What does that mean?
 
-`redux` uses middleware, just like `express` does. This means that you can add additional functionality to your dispatcher. This is how you add the [sophisticated debug system](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) I mentioned earlier - it's a [middleware](https://github.com/zalmoxisus/redux-devtools-extension#1-with-redux).
+`redux` uses middleware, just like `express` does. This means that you can add additional functionality to your dispatcher. This is how you use the [sophisticated debug system](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) I mentioned earlier.
 
 `redux-observable` is the most powerful async middleware. It combines an `Observable` with the `dispatcher`.
 
@@ -204,7 +205,7 @@ By convention, we [use the '$' character as a suffix](https://stackoverflow.com/
 
 `rxjs` is powerful because `Observable` has [many combinators and operations](https://www.learnrxjs.io/learn-rxjs/operators)
 
-A quick note: like `Promise`, `Observable` models unchecked exceptions with optional error handling. If these concepts is unfamiliar, check out my series called 'Why is TaskEither Like that?'. I recommend using an `Either` type to model errors with more type safety. `fp-ts-rxjs` provides a great type alias called [`ObservableEither`](https://github.com/gcanti/fp-ts-rxjs/blob/master/test/ObservableEither.ts) that's similar to `TaskEither` for this purpose.
+A quick note: like `Promise`, `Observable` models unchecked exceptions with optional error handling. If these concepts are unfamiliar, check out my article [Either vs Exception Handling](https://dev.to/anthonyjoeseph/either-vs-exception-handling-3jmg). I recommend using an `Either` type to model errors with more type safety. `fp-ts-rxjs` provides a great type alias called [`ObservableEither`](https://github.com/gcanti/fp-ts-rxjs/blob/master/test/ObservableEither.ts) that's similar to `TaskEither` for this purpose.
 
 # Ok so what's redux-observable agian?
 
