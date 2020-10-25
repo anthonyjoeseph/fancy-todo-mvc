@@ -1,7 +1,7 @@
 import { pipe } from "fp-ts/pipeable"
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
-import * as TE from 'fp-ts/TaskEither'
+import * as T from 'fp-ts/Task'
 import * as Op from 'monocle-ts/lib/Optional'
 import * as Tr from 'monocle-ts/lib/Traversal'
 import { AppState } from "../AppState"
@@ -11,10 +11,19 @@ const toggleTodo = (
   todoid: number,
   appState: AppState,
   setAppState: (s: AppState) => void,
-): void => {
-  pipe(
-    toggleTodoBackend(todoid),
-    TE.map(() => pipe(
+): Promise<void> => pipe(
+  toggleTodoBackend(todoid),
+  T.map(E.fold(
+    err => pipe(
+      appState,
+      pipe(
+        Op.id<AppState>(),
+        Op.right,
+        Op.prop('todos'),
+      ).set(E.left(err)),
+      setAppState,
+    ),
+    () => pipe(
       appState,
       pipe(
         Op.id<AppState>(),
@@ -27,18 +36,9 @@ const toggleTodo = (
         Tr.modify(a => !a),
       ),
       setAppState,
-    )),
-    TE.mapLeft(err => pipe(
-      appState,
-      pipe(
-        Op.id<AppState>(),
-        Op.right,
-        Op.prop('todos'),
-      ).set(E.left(err)),
-      setAppState,
-    )),
-    invokeTask => invokeTask(),
-  )
-}
+    )
+  )),
+  invokeTask => invokeTask(),
+)
 
 export default toggleTodo

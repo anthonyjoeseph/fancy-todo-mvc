@@ -5,7 +5,7 @@ import * as A from 'fp-ts/Array'
 import React, { useContext } from 'react'
 import TodoComponent from './Todo'
 import { APIError, AppStateContext } from '../../../logic/AppState'
-import { Todo as TodoType, Todo } from '../../../../../shared/model'
+import { Todo as TodoType, Todo } from 'shared-todo/model'
 import { LoggedInLocation } from '../../../logic/Location'
 import toggleTodo from '../../../logic/actions/ToggleTodo'
 

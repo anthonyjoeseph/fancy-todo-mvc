@@ -2,7 +2,7 @@ import { Int } from 'io-ts'
 import { Router } from 'express'
 import { parsedResponseArrayEndpoint, emptyResponseEndpoint, parsedResponseSingleEndpoint } from '../util'
 import db from '../db'
-import { Todo } from '../../../shared/model'
+import { Todo } from '../../../shared/src/model'
 import {
   GetTodos,
   ToggleTodoComplete,
@@ -12,7 +12,7 @@ import {
   toggleCompleteEndpoint,
   addTodoEndpoint,
   deleteTodoEndpoint
-} from '../../../shared/endpoints'
+} from '../../../shared/src/endpoints'
 
 const router = Router()
 

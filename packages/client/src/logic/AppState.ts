@@ -2,8 +2,11 @@ import { makeADT, ofType, ADTType, unionADT } from '@morphic-ts/adt'
 import * as t from 'io-ts'
 import * as O from 'fp-ts/Option'
 import * as E from 'fp-ts/Either'
-import { Todo, User } from '../../../shared/model'
-import { LoggedOutLocation, Location, LoggedInLocation, ExistingLocation } from './Location'
+import { Todo, User } from '../../../shared-todo/src/model'
+import { 
+  LoggedOutLocation, Location,
+  LoggedInLocation, ExistingLocation
+} from './Location'
 import React from 'react'
 
 export const AppStateContext = React.createContext<[

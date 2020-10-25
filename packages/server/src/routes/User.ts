@@ -2,11 +2,11 @@ import { Int } from 'io-ts'
 import { Router } from 'express'
 import { emptyResponseEndpoint, parsedResponseSingleEndpoint } from '../util'
 import db from '../db'
-import { User } from '../../../shared/model'
+import { User } from '../../../shared/src/model'
 import {
   LoginUser, AddUser, DeleteUser,
   loginUserEndpoint, addUserEndpoint, deleteUserEndpoint,
-} from '../../../shared/endpoints'
+} from '../../../shared/src/endpoints'
 
 const router = Router()
 

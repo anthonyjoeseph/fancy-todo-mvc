@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { User } from '../../../../../shared/model';
+import { User } from 'shared-todo/model';
 import addTodo from '../../../logic/actions/AddTodo'
 import { AppStateContext } from '../../../logic/AppState';
 

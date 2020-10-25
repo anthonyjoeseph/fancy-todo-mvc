@@ -24,6 +24,7 @@
     "fp-ts": "^2.8.2",
     "fp-ts-contrib": "^0.1.18",
     "hyper-ts": "^0.6.0",
+    "io-ts-types": "^0.5.11",
     "pg-promise": "^10.6.1"
   },
   "devDependencies": {

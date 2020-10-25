@@ -14,8 +14,8 @@ import {
   toggleCompleteEndpoint,
   loginUserEndpoint,
   addUserEndpoint,
-} from '../../../shared/endpoints'
-import { Todo, User } from '../../../shared/model'
+} from '../../../shared-todo/src/endpoints'
+import { Todo, User } from '../../../shared-todo/src/model'
 import { APIError } from './AppState'
 import { flow } from 'fp-ts/lib/function'
 

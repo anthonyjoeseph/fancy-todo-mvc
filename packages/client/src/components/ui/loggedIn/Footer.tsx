@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Link from '../common/Link';
 import { LoggedInLocation, ExistingLocation } from '../../../logic/Location';
 import { AppStateContext } from '../../../logic/AppState';
-import { User } from '../../../../../shared/model';
+import { User } from 'shared-todo/model';
 
 const Footer = ({
   location,

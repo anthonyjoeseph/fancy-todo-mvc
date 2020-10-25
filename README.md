@@ -38,4 +38,4 @@ This is a Typescript ui & api monorepo based on the structure outlined on this [
 
 The client was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-The server was bootstrapped with [express-generator-typescript](https://github.com/seanpmaxwell/express-generator-typescript)
+The server was (vaguely) bootstrapped with [express-generator-typescript](https://github.com/seanpmaxwell/express-generator-typescript)

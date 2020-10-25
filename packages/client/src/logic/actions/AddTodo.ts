@@ -1,9 +1,9 @@
 import { pipe } from "fp-ts/pipeable"
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
-import * as TE from 'fp-ts/TaskEither'
+import * as T from 'fp-ts/Task'
 import * as Op from 'monocle-ts/lib/Optional'
-import { User } from "../../../../shared/model"
+import { User } from "shared-todo/model"
 import { AppState } from "../AppState"
 import { addTodo as addTodoBackend } from '../Backend'
 
@@ -12,10 +12,19 @@ const addTodo = (
   user: User,
   appState: AppState,
   setAppState: (a: AppState) => void
-): void => {
-  pipe(
-    addTodoBackend(user.id, text),
-    TE.map(newTodo => pipe(
+): Promise<void> => pipe(
+  addTodoBackend(user.id, text),
+  T.map(E.fold(
+    err => pipe(
+      appState,
+      pipe(
+        Op.id<AppState>(),
+        Op.right,
+        Op.prop('todos'),
+      ).set(E.left(err)),
+      setAppState,
+    ),
+    newTodo => pipe(
       appState,
       pipe(
         Op.id<AppState>(),
@@ -24,19 +33,10 @@ const addTodo = (
         Op.right,
         Op.modify(t => A.snoc(t, newTodo))
       ),
-      setAppState
-    )),
-    TE.mapLeft(err => pipe(
-      appState,
-      pipe(
-        Op.id<AppState>(),
-        Op.right,
-        Op.prop('todos'),
-      ).set(E.left(err)),
       setAppState,
-    )),
-    invokeTask => invokeTask(),
-  )
-}
+    )
+  )),
+  invokeTask => invokeTask(),
+)
 
 export default addTodo
