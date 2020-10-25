@@ -41,7 +41,7 @@ Pros:
 - sophisticated debug system
 - global state = illegal states become unrepresentable. Reduce or eliminate null checking
 - nearly total referential transparency
-- decoupled side effects enable dependency injection & unit testing
+- decoupled side effects enable dependency injection which aids testing
 
 Cons:
 
@@ -50,7 +50,6 @@ Cons:
 - colocated state is kinda the whole point of react (though you're certainly still allowed to use hooks for textfield input etc)
 - adding new behavior is cumbersome
 - applications with many different behaviors can become unwieldy
-- unit testing effectful code is less useful and more complex than integration testing with react-testing-library
 - the debug system is a bit arbitrary unless paired with a hot reloader
 
 ## [recoil](https://recoiljs.org/)
@@ -169,7 +168,7 @@ const reducer = (state: State, action: Action): State => {
 
 We can't return `newState` because reducers are synchronous. We'll need an async middleware to handle this case. What does that mean?
 
-`redux` uses middleware, just like `express` does. This means that you can add additional functionality to your dispatcher. This is how you use the [sophisticated debug system](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) I mentioned earlier.
+`redux` uses middleware, just like `express` does. This means that you can add additional functionality to your dispatcher. This is how you add the [sophisticated debug system](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) I mentioned earlier - it's a [middleware](https://github.com/zalmoxisus/redux-devtools-extension#1-with-redux).
 
 `redux-observable` is the most powerful async middleware. It combines an `Observable` with the `dispatcher`.
 
@@ -247,6 +246,8 @@ const reducer = (state: State, action: Action): State => {
 }
 ```
 
+If you're unfamiliar with `pipe` syntax, check out Ryan Lee's excellent [Practical Guide to fp-ts part 1](https://rlee.dev/writing/practical-guide-to-fp-ts-part-1) (the whole series is excellent but part 1 deals specifically with `pipe`).
+
 This may seem like a complex way to update state asynchronously, and it is. Here's comparable code using vanilla react:
 
 ```tsx
@@ -310,8 +311,8 @@ const Routes = ({ state }: { state: AppState }) => (
       path="/authenticated"
     >
       <Authenticated
-        user={user}
-        data={data}
+        user={state.user}
+        data={state.data}
       />
     </Route>
     <Route
@@ -327,10 +328,32 @@ We have a few potential errors here:
 
 - What do we display we're at '/authenticated' but we have no `user` or no `data`?
 - What if we have a `user` but no data, or vice versa?
-- What if we misspell '/authenticated'?
-- What if we forget to handle '/unauthenticated'?
 
-We could handle the first two problems with null checking, but this is a bad solution. We know that we only ever want to be at the '/authenticated' route when we have both a `user` and `data`. By null checking here, we are handling an error that's only possible due to a weakness in our system.
+We could solve this with null checking.
+
+```tsx
+const Routes = ({ state }: { state: AppState }) => (
+  <>
+    <Route
+      path="/authenticated"
+    >
+      {state.user && state.data && (
+        <Authenticated
+          user={state.user}
+          data={state.data}
+        />
+      )}
+    </Route>
+    <Route
+      path="/unauthenticated"
+    >
+      <Unauthenticated/>
+    </Route>
+  </>
+)
+```
+
+This is a bad solution. What if we have no `user` or `data` and we're at the `/authenticated` route? This should never be possible, but at compile time it could be. We have introduced a possible error that exists solely due to a weakness in our system.
 
 We can fix all of this using a sum type:
 
@@ -436,6 +459,18 @@ const Routes = ({ state }: { state: AppState }) => AppState.matchStrict({
 ```
 
 This replaces [typesafe-actions](https://github.com/piotrwitek/typesafe-actions), [redux-actions](https://redux-actions.js.org/introduction/tutorial), and `ofType` in both [ngrx](https://ngrx.io/api/effects/ofType) and [redux-observable](https://github.com/redux-observable/redux-observable/blob/2b6c0ed700b78f86780ac5d2e6ba81d341249a0a/src/operators.ts#L16) by solving the more general problem of sum types.
+
+# Conclusion
+
+`redux-observable` is a powerful framework. It effectively decouples the ui of a project from it's behaviors, and guides it toward a more functional style. Though tangibly it mostly just helps implement undo & testing, it has benefits beyond that.
+
+I like to use it if I'm working with streams or a lot of event handling. This is because I know that, especially if I need to mock out certain behaviors for testing, I will eventually end up architecting the project using something similar to `redux-observable` anyway.
+
+The framework itself is extremely simple and minimal. I use it less for its functionality than for its name - it tells incoming developers a lot about how the project is structured just by reading through its dependencies in `package.json`.
+
+`redux-observable` can also be used to bring a pure functional framework to `react`. For more on how `redux-observable` can be used as an `IO` entry point, check out [my article about it](https://dev.to/anthonyjoeseph/taskeither-vs-fluture-4e0n). For more on the history of frontend functional frameworks, check out my article [Why is redux-observable like that?](https://dev.to/anthonyjoeseph/why-is-redux-observable-like-that-2g4e)
+
+Hopefully this article gives a deep enough overview to decide whether or not `redux` and `redux-observable` is right for you!
 
 [^1]: This example's a bit misleading. We can't use `enum` with `redux` because `Action` has to be an object conforming to [this interface](https://github.com/reduxjs/redux/blob/master/src/types/actions.ts#L18): `interface Action<T> { type: T }`
 
