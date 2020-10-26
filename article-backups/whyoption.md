@@ -11,7 +11,7 @@
   * [`undefined` can't nest](#-undefined--can-t-nest)
   * [`Option` saves the day!](#-option--saves-the-day-)
   * [Metadata and Data: Sum Types vs Union Typs](#metadata-and-data--sum-types-vs-union-typs)
-- [Category Theory](#category-theory)
+- [Set Theory](#set-theory)
 - [Conclusion](#conclusion)
 
 # The problem
@@ -200,9 +200,9 @@ const coupledMetadata2: number | undefined = 3
 
 While the types `O.None` and `undefined` may seem similar, `{ _tag: 'None' }` has more information encoded into it than `undefined`. This is because `_tag` must be one of two values, while `undefined` has no such context. In the earlier case of `sum`, `undefined` smushes two different metadata together inseparably, resulting in information loss.
 
-# Category Theory
+# Set Theory
 
-While union types are simply the union of two categories
+While union types are simply the union of two sets
 
 A ∪ B
 
@@ -210,7 +210,7 @@ Each element of a sum type necessarily has a [label](https://waleedkhan.name/blo
 
 A + B = ({l<sup>A</sup>} × A) ∪ ({l<sup>B</sup>} × B)
 
-This label represents the category the object originated from. It allows each object can 'remember' where it came from.
+This label represents the set the object originated from. It allows each object can 'remember' where it came from.
 
 We can also see in the above equation that a sum type is a union type, but not vice versa.
 
@@ -231,3 +231,5 @@ Before I did that, however, I thought it would be wise to double check that this
 I am inspired by public forums where I'm able to ask basic questions and be taken seriously. I recommend joining the `fp-ts` and `typescript` slack channels [here](https://fpchat-invite.herokuapp.com), especially if you're interested in deeper understanding of functional programming.
 
 The community is supportive and kind, and has helped me become a better developer.
+
+(edit:) Thanks to [Monoid Musician](https://github.com/MonoidMusician) for pointing out that sum types & union types belong to set theory, not category theory.
