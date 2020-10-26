@@ -581,4 +581,4 @@ Needless to say, as great as `Promise` is, `TaskEither` is even better. It resol
 
 [^1]: Some people dislike the burrito metaphor - they correctly assert that it only describes a few monads, and only leads to more confusion later when introduced to more. Here are a couple of paradigmatic tweets ([1](https://twitter.com/impurepics/status/1283660072380502016/photo/1), [2](https://twitter.com/YuriyBogomolov/status/1283237296402243585)).
 
-  However, the paper [What we Talk About When we Talk About Monads](http://tomasp.net/academic/papers/monads/monads-programming.pdf) posits that such metaphors are necessary for complete understanding of the concept.
+  However, the paper [What we Talk About When we Talk About Monads](http://tomasp.net/academic/papers/monads/monads-programming.pdf) posits that such metaphors are necessary for complete understanding of the concept, alongside 'formal' and 'implementation'-level knowledge.

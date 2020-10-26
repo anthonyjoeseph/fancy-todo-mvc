@@ -12,6 +12,7 @@
   * [`Option` saves the day!](#-option--saves-the-day-)
   * [Metadata and Data: Sum Types vs Union Typs](#metadata-and-data--sum-types-vs-union-typs)
 - [Set Theory](#set-theory)
+- [Category Theory](#category-theory)
 - [Conclusion](#conclusion)
 
 # The problem
@@ -53,23 +54,14 @@ If you're interested in whether to use 'Nullable' or `Option`, check out my comp
 But why do we have to choose? Why isn't `Option` just defined as `type Option<A> = A | undefined`? It's trivial to implement a monad instance for that type:
 
 ```ts
+import { identity } from 'fp-ts/function'
+
 type Option<A> = A | undefined
-const of = <A>(a: A): Option<A> => a
-const chain = <A, B>(f: (a: A) => Option<B>) => (b: Option<A>): Option<B> => b ? f(b) : undefined
+export const OptionMonad = {
+  of: identity,
+  chain: <A, B>(fa: Option<A>, f: (a: A) => Option<B>): Option<B> => fa !== undefined ? f(fa) : undefined,
+}
 ```
-
-This instance passes all the [monad laws](https://wiki.haskell.org/Monad_laws)
-
-```ts
-const value: number = 1
-const f = (x: number) => of(x * 2)
-const g = (x: number) => of(x + 6)
-const leftIdentity = pipe(value, of, chain(f)) === f(value)
-const rightIdentity = pipe(value, of, chain(of)) === pipe(value, of)
-const associativity = pipe(value, of, chain(f), chain(g)) === pipe(value, of, chain(flow(f, chain(g))))
-```
-
-Which also holds true if `value` is itself an `Option` and `f` & `g` are redefined accordingly.
 
 What gives? Wouldn't that make life much easier? Isn't `O.none` the same thing as `undefined` anyway?
 
@@ -161,7 +153,7 @@ const sum: O.Option<O.Option<number>>
 
 `Option` nests! This means that we're able to track exactly where our operation failed.
 
-## Metadata and Data: Sum Types vs Union Typs
+## Metadata and Data: Sum Types vs Union Types
 
 [Gabriel Lebec](https://github.com/glebec) explained to me on the [fp-ts slack channel](https://functionalprogramming.slack.com/archives/CPKPCAGP4/p1593969845084700?thread_ts=1593968750.075600&cid=CPKPCAGP4) that `Option` gives us
 
@@ -220,11 +212,36 @@ In `Option`, this label is the `_tag` field.
 
 When nested, the `_tag` field helps `Option` 'remember' whether it has succeeded or failed.
 
+# Category Theory
+
+Another way to think about nestabiltiy is through the lens of formal monadic correctness.
+
+Remember our `OptionMonad` instance defined earlier? Although it's is correctly typed, it is not in fact a proper monad instance - it fails the [left identity law](https://wiki.haskell.org/Monad_laws)
+
+```ts
+const f = (_: undefined): number => 1
+const leftTerm = OptionMonad.chain(OptionMonad.of(undefined), f)
+const rightTerm = f(undefined)
+const leftIdentity = leftTerm === rightTerm
+console.log(`${leftTerm} vs. ${rightTerm}`)
+console.log(`left identity passes? ${leftIdentity}`)
+// undefined vs. 1
+// left identity passes? false
+```
+
+The monadic left identity deals with flattening and wrapping[^1] - basically it asks the question "do the flattening from `chain` and the wrapping from `of` consistently cancel each other out?"
+
+In our case, the answer is no. Since our `of` is the identity function, it doesn't really wrap anything. Since our `chain` function has no wrapper to unwrap, it must short circuit on all `undefined` values, even if `undefined` was the value that we wanted it to pass through. Directly invoking `f` with an `undefined` value returns a `number`, so our behavior is shown to be inconsistent.
+
+This proves in a simple way the pragmatic, engineering use of the monad laws (or one of them, anyway). The left identity ensures that monads are meaningfully nest-able.
+
+Remember this the next time you find yourself frustrated by `O.fromNullable` - you are lifting your unmarked data into a glorious nestable mathematically sound monadically wrapped value!
+
 # Conclusion
 
-Hopefully this has provided some insight into why `Option` was implemented as a sum type, and not a union type (nullable).
+Hopefully this has provided some insight into why `Option` was implemented as a sum type, and not just a union type - and as a bonus, provided some insight into the practical benefits of proper category theoretical monads.
 
-A month or two ago, I discovered that a monad instance of Nullable could be valid and have a simpler interface than the tagged union. I was excited, and I almost made a pull request to the library to 'fix' the 'problem' I had found.
+A month or two ago, I 'discovered' that a monad instance of Nullable could be valid (it's not) and have a simpler interface than the tagged union. I was excited, and I almost made a pull request to the library to 'fix' the 'problem' I had found.
 
 Before I did that, however, I thought it would be wise to double check that this 'problem' was in fact a mistake. I asked the [fp-ts slack channel](https://functionalprogramming.slack.com/archives/CPKPCAGP4/p1593967904065100) why `Option` was implemented as a tagged union. You can click the link above to see the lovely explanations that people provided. Happily, I avoided implementing that pull request, and instead was redirected on a journey of learning that led me to write this article.
 
@@ -232,4 +249,8 @@ I am inspired by public forums where I'm able to ask basic questions and be take
 
 The community is supportive and kind, and has helped me become a better developer.
 
-(edit:) Thanks to [Monoid Musician](https://github.com/MonoidMusician) for pointing out that sum types & union types belong to set theory, not category theory.
+(edit:) The slack community continues to support me! Thanks to [Monoid Musician](https://github.com/MonoidMusician) for pointing out that sum types & union types belong to set theory, not category theory, and for pointing out that `OptionMonad` fails the monad laws.
+
+[^1]: Some people dislike the wrapper metaphor - they correctly assert that it only describes a few monads, and only leads to more confusion later when introduced to more. Here are a couple of paradigmatic tweets ([1](https://twitter.com/impurepics/status/1283660072380502016/photo/1), [2](https://twitter.com/YuriyBogomolov/status/1283237296402243585)).
+
+  However, the paper [What we Talk About When we Talk About Monads](http://tomasp.net/academic/papers/monads/monads-programming.pdf) posits that such metaphors are necessary for a complete understanding of the concept, alongside 'formal' and 'implementation'-level knowledge.
