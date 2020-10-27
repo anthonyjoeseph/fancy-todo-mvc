@@ -253,11 +253,11 @@ const userReducer: (u: User | undefined, a: Action) => User = ...
 const currentReducer: (c: Current | undefined, a: Action) => Current = ...
 const settingsReducer: (s: Settings | undefined, a: Action) => Settings = ...
 
-const reducer: (s: AppState | undefined, a: Action) => AppState = combineReducers(
-  userReducer,
-  currentReducer,
-  settingsReducer
-)
+const reducer: (s: AppState | undefined, a: Action) => AppState = combineReducers({
+  user: userReducer,
+  current: currentReducer,
+  settings: settingsReducer
+})
 ```
 
 Notice that each sub-reducer can be passed in an undefined state, but must always return a value. This is because, in keeping with the compositionality theme, each reducer is responsible for initializing its own data.
@@ -470,47 +470,3 @@ The paper suggests that developers often eschew metaphorical explanations of mon
 In the spirit of the paper, we might say that the 'implementation' level of understanding `redux-observable` is its interface - the type signatures for `reducer`, `dispatch`, and `epic`. The 'metaphorical' level is the common understanding of `redux-observable` as a 'state management' library - something that can help wrangle complex state. These explanations are not incorrect, but they miss the crucial third level - 'formal'.
 
 Formally, `redux-observable` is a referentially transparent functional architecture. It's history is edifying because it took the long way to get there (as opposed to something like Elm). Understanding that journey can help understand some of the stranger points about it and some of the documentation and opinion pieces surrounding it.
-
-I would argue that a formal understanding of `redux-observable` is very difficult to achieve, if not impossible. Sure, it's a referentially transparent side-effect system that completes a purely functional vision of react in accordance with the CQRS pattern. But this doesn't really get at why it is the way it is.
-
-Fundamentally, it's the result of a long line of ideas and attempted architectures - and it has already been succeeded by others. While monads have the luxury of a precise mathematical definition, `redux-observable` is just something somebody threw together that stuck. I consider `redux-observable` unfinished - a noble experiment.
-
-`redux-observable` is the sum of its parts - it's the spirited ambition of Czaplicki's Elm, multiplied by the populism of react, tempered by the dry formalism of CQRS, blessed by the pragmatic compositionality of rxjs, and cursed by an unholy and confusing alliance with FRP.
-
-`redux` was conceived as a way to solve an esoteric problem - hot reloading w/ flux - and it became popular as a solution to prop drilling, which react context solves in a better and simpler way. Why does it endure?
-
-It seems to me that its goal is to be the most powerful purely architecture for the frontend. `redux-observable` has been discovered to be an IO entry point for react. But why would we wrap all of our side-effect in IO? 
-
-`redux-observable` is a hopelessly leaky abstraction. In fact, I don't think the problem is that `redux-observable` is overly simplified for javascript users. I would argue that a sensible purely functional architecture for the frontend is a huge unsolved problem in every domain.
-
-The authors take a guess that developers tend to apply monads at inappropriate times because they are trendy
-
-> ...This is, most likely, the result of the social side of monads. They are a topic of interest for the community and they became a key tool of the purely functional research programme.
-
-
-
-I think this is sometimes unfortunately used as a form of gatekeeping - new developers are told to [RTFM](https://en.wikipedia.org/wiki/RTFM), when the M can only tell you _what_ something is without really describing _why_ it exists.
-
-This is discussed in the paper [What we Talk About When We Talk About Monads](http://tomasp.net/academic/papers/monads/monads-programming.pdf), although in reverse. Here, the problem is that teachers often introduce monads based on their history in category theory, and eschew simple metaphors like the burrito.
-
-They argue that the relation of programming to category theory is based on hypothesis rather than fact, referring to it as a `purely functional research programme`. It's not only harmful but inaccurate to decry simple metaphors that aid understanding.
-
-> Monads have a precise and succinct category theoretical definition that formally defines exactly what a monad is. Yet, this definition does not help you understand monads. It does not explain how and why they are useful in programming...
-
-> ...Some authors treat such metaphorical explanations as kludges that are only needed because the concept is difficult to explain otherwise. We argue that this is not the case and the metaphors are an important part of what a monad is.
-
-> ...[For some,] A simple category theoretical definition leads to a programming construct that is useful in practice. For others, it symbolizes the elitism of incomprehensible “ivory tower” approach to programming.
-
-> ...Learning monads seems to have an aspect of what anthropologists call a rite of passage.
-
-The paper further posits that programming concepts ought to be thought of across three levels: 'formal', 'implementation' and 'metaphorical'. They discuss this in context of monadic solutions that ended up not being useful.
-
-> ... We suggest that treating monads in a more comprehensive way and considering the formal, implementation and metaphorical level could have prevented the undesirable use of monads
-
-> ...This is, most likely, the result of the social side of monads. They are a topic of interest for the community and they became a key tool of the purely functional research programme.
-
-While a category theoretical understanding of monads is important, it's only a part of the whole picture. Teaching monads with category theory is like teaching baking with organic chemistry, or like teaching react hooks with algebraic effects. While not incorrect, it's difficult to learn that way, and understanding it without a baseline can actually lead to the wrong usage. The explanation is unhelpful at best and discouraging at worst.
-
-Poor explanations - unimportant context for monads or missing context for redux, can be used to make concepts deliberately opaque.
-
-I guess this long, rambling conclusion can best be ended on this point - programming is a human endeavor, and the so-called "social side" and the history can be as important as the code itself for understanding what the hell people are talking about.
