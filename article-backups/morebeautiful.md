@@ -466,10 +466,10 @@ If you're interested in learning more, here's a comprehensive [article](https://
 
   In practice, sometimes I prefer to use a [union type of string literals](https://www.typescriptlang.org/docs/handbook/literal-types.html#string-literal-types) to increase referential transparency, although this can be a little less legible.
 
-[^2]: The name 'sum type' refers to the number of possibilities it can represent. They exist in contrast to product types (e.g. Typescript interfaces, tuples) (they are mathematical [duals](https://en.wikipedia.org/wiki/Duality_(mathematics))). Take the following example:
+[^2]: The name 'sum type' refers to the number of possibilities it can represent. They exist in contrast to product types (e.g. Typescript interfaces and tuples) (they are mathematical [duals](https://en.wikipedia.org/wiki/Duality_(mathematics))). Take the following example:
 
-  `enum Vehicle { Car, Motorcycle, Truck }`
-  `enum Color { Yellow, Red, Blue }`
+  `type Vehicle = 'Car' | 'Motorcycle' | 'Truck'`
+  `type Color = 'Yellow' | 'Red' | 'Blue'`
   `type BirthdayPartyTheme = Vehicle | Color`
   `interface Ride { wheels: Vehicle; style: Color }`
   
