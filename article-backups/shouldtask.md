@@ -337,7 +337,7 @@ As I said earlier, the advantage is type-safety. `Promise` sacrifices a lot of s
 
 For even more power and specificity, you can use a union type or sum type to represent all of your different possible errors. This can strengthen a project that handles more than one possible kind of error (probably most projects). If this sounds interesting, check out my next article, [Even More Beautiful API Calls with Sum Types](https://dev.to/anthonyjoeseph/fp-ts-and-even-more-beautiful-api-calls-w-sum-types-53j0)
 
-I'll tell you a secret - pure functional programmers don't have to follow rules #2 and #3. They have a rule of their own - they can never invoke `Task` at all! Sounds impossible, right? If you're curious about this and you have some time on your hands, check out my relevant article [Why is fp-ts TaskEither Like that? - TaskEither vs Fluture](https://dev.to/anthonyjoeseph/taskeither-vs-fluture-4e0n)
+I'll tell you a secret - pure functional programmers don't have to follow rules #2 and #3. They have a rule of their own - they can never invoke `Task` at all! Sounds impossible, right? If you're curious about this and you have some time on your hands, check out my article [Why is fp-ts TaskEither Like that? - TaskEither vs Fluture](https://dev.to/anthonyjoeseph/taskeither-vs-fluture-4e0n)
 
 # Should I use Task
 
