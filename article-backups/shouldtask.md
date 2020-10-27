@@ -337,7 +337,7 @@ As I said earlier, the advantage is type-safety. `Promise` sacrifices a lot of s
 
 For even more power and specificity, you can use a union type or sum type to represent all of your different possible errors. This can strengthen a project that handles more than one possible kind of error (probably most projects). If this sounds interesting, check out my next article, [Even More Beautiful API Calls with Sum Types](https://dev.to/anthonyjoeseph/fp-ts-and-even-more-beautiful-api-calls-w-sum-types-53j0)
 
-I'll tell you a secret - pure functional programmers don't have to follow rules #2 and #3. They have a rule of their own - they can never invoke `Task` at all! Sounds impossible, right? If you're curious about this and you have some time on your hands, check out my article [Why is fp-ts TaskEither Like that? - TaskEither vs Fluture](https://dev.to/anthonyjoeseph/taskeither-vs-fluture-4e0n)
+I'll tell you a secret - pure functional programmers don't have to follow rules #2 and #3. They have a rule of their own - they can never invoke `Task` at all! Sounds impossible, right? If you're curious about this and you have some time on your hands, check out my relevant article [Why is fp-ts TaskEither Like that? - TaskEither vs Fluture](https://dev.to/anthonyjoeseph/taskeither-vs-fluture-4e0n)
 
 # Should I use Task
 
@@ -379,7 +379,7 @@ I hope `Task` leads you toward a bright future of asynchronous safety and securi
 
 [^2]: `TaskEither` is also [defined as an `interface`](https://github.com/gcanti/fp-ts/blob/a5f06e7172eab0fe36ea72ae19263e2d78cc3200/src/TaskEither.ts#L41)
 
-[^3]: You can get rid of the `any` type in this code using [io-ts](https://github.com/gcanti/io-ts/blob/master/index.md). io-ts uses `Either` for its errors too - it's a match made in heaven!
+[^3]: You can get rid of the `any` type in this code using [io-ts](https://github.com/gcanti/io-ts/blob/master/index.md). io-ts uses `Either` for its errors too - it's a match made in heaven! Here's a great tutorial: [fp-ts and Beautiful API Calls](https://dev.to/gnomff_65/fp-ts-and-beautiful-api-calls-1f55)
 
 [^4]: Returning a value from a parameterless function to make it lazily evaluated is a common pattern called a 'thunk'. In this example, we would say that `later` is a thunk. [According to Eric Raymond](https://en.wikipedia.org/wiki/Thunk#cite_note-1):
 

@@ -400,7 +400,7 @@ To oversimplify, Parsons makes the correct point that monolithic error types are
 
 # Is it Actually Boilerplate
 
-Functions like `httpGet` and `decodeWith` can seem like boilerplate. Shouldn't every application have to write something like this? Surely there must be existing npm packages out there that do this type of thing for you.
+Functions like `getFromUrl` and `decodeWith` can seem like boilerplate. Shouldn't every application have to write something like this? Surely there must be existing npm packages out there that do this type of thing for you.
 
 There are several out there (like [fetch-ts](https://github.com/YBogomolov/fetcher-ts), [fp-fetch](https://www.npmjs.com/package/fp-fetch), & [react-fetchable](https://github.com/remojansen/react-fetchable)). My current favorite is [appy](https://github.com/contactlab/appy) because it accurately models javascript's `fetch` and composes nicely with `io-ts`. However, though I normally discourage re-inventing the wheel, I often prefer to write this kind of code on my own.
 

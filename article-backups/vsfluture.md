@@ -274,7 +274,7 @@ const printOutput: (lineBreaks: boolean): IO.IO<void> => ...
 
 Referential transparency, an important asset for code, means that all possible outcomes of a function are represented in its type signature. This is the meaning of a pure function - a function that has no side effects unrepresented in its type signature.
 
-In react, `Component` is called `Pure` if it's stateless - theoretically meaning there are no side effects to it's render logic. The JSX element it output was a pure function of it's input (props), and it given the same input it will always have the same output. The name `Pure` comes from this same idea of referential transparency. `IO` helps us maintain purity by representing a side-effect in the type system.
+In react, `Component` is called `Pure` if it's stateless - theoretically meaning there are no side effects to it's render logic. The JSX element it output was a pure function of it's input (props), and it given the same input it will always have the same output. The name `Pure` comes from this same idea of referential transparency. `IO` helps us maintain purity by representing a side-effect in the type system - it tells us exactly which parts of the program are impure, allowing us to keep a clear separation of the two.
 
 `IO` is lazy for the reasons listed above - short-circuit evaluation and reasoning about `when` the operation is invoked, as well as a reason discussed in the previous post - it allows `IO` to nest (aka conform to the monad laws).
 
