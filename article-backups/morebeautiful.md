@@ -20,7 +20,7 @@ Let's build on the application outlined in [fp-ts and Beautiful API Calls](https
 We want to be able to customize error messages based on their source:
 
 ```ts
-const handleErrors = (errors: Error): T.Task<string> => {
+const handleErrors = (error: Error): T.Task<string> => {
   const message: string = ...
   if (/* error is from parsing */) {
     return T.of(`Parse error: ${message}`)
@@ -47,11 +47,11 @@ const runProgram = pipe(
 As it stands, implementing `handleErrors` is difficult, since its input is of type `Error`. This means that we'll have to parse the `string` at `error.message`.
 
 ```ts
-const handleErrors = (errors: Error): T.Task<string> => {
+const handleErrors = (error: Error): T.Task<string> => {
   const message: string = ...
-  if (errors.message.includes('parse')) {
+  if (error.message.includes('parse')) {
     return T.of(`Parse error: ${message}`)
-  } else if (errors.message.includes('network')) {
+  } else if (error.message.includes('network')) {
     return T.of(`Network error: ${message}`)
   }
   return T.of('can never happen')
