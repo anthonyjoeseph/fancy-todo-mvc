@@ -226,7 +226,7 @@ const AppError: ADT<NetworkError | ParseError, "type"> = makeADT('type')({
 })
 type AppError = ADTType<typeof AppError>
 
-const handleErrors: (a: AppError) => T.Task<string> = AppError.matchStrict({
+const handleErrors = AppError.matchStrict<T.Task<string>>({
   NetworkError: ({ message }) => T.of(`Network error: ${message}`),
   ParseError: ({ errors }) => pipe(
     errors,
@@ -240,7 +240,7 @@ const handleErrors: (a: AppError) => T.Task<string> = AppError.matchStrict({
 
 `makeADT`'s first parameter is our tagged union's 'tag'. For this example, our tag is 'type'.
 
-You might also notice that we have two entities called `AppError`: a `const` and a `type`. The `const` is `morphic`'s magical `ADT` type that gives us fancy type-safe operations like `matchStrict`. The compiler is able to infer from context which of the two `AppError` entities to use, and you only have to export & import `AppError` once to be able to use both entities.
+You might also notice that we have two entities called `AppError`: a `const` and a `type`. The `const` is `morphic`'s magical `ADT` value that gives us fancy type-safe operations like `matchStrict`. The compiler is able to infer from context which of the two `AppError` entities to use, and you only have to export & import `AppError` once to be able to use both entities.
 
 We also get a nice constructor syntax:
 
