@@ -248,7 +248,7 @@ We also get a nice constructor syntax:
 const decodeWith = <A>(decoder: t.Decoder<unknown, A>) =>
   flow(
     decoder.decode,
-    E.mapLeft((errors) => AppError.of.ParseError({ errors, })),
+    E.mapLeft((errors) => AppError.of.ParseError({ errors })),
     TE.fromEither
   )
 const getFromUrl = <A>(url:string, codec:t.Decoder<unknown, A>) => pipe(
@@ -271,6 +271,7 @@ We get many features for free:
 const error: AppError = ...
 let message: string = 'default'
 if (AppError.is.NetworkError(error)) {
+  // the type is narrowed, so we have access to `message`
   message = error.message
 }
 // or
