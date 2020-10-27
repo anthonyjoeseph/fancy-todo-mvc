@@ -23,7 +23,7 @@
 # What is Option?
 
 If you aren't sure, here are links to simple lessons that I like:
-  - [pipe](https://dzone.com/articles/functional-on-the-frontend-with-fp-ts-and-pipe) (good to understand this before diving into Option)
+  - [pipe](https://dev.to/ryanleecode/practical-guide-to-fp-ts-pipe-and-flow-4e9n) (good to understand this before diving into Option)
   - [Option](https://dev.to/ryanleecode/practical-guide-to-fp-ts-option-map-flatten-chain-6d5)
 
 # The Problem

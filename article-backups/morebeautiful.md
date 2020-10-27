@@ -44,7 +44,21 @@ const runProgram = pipe(
 )();
 ```
 
-As it stands, implementing `handleErrors` is difficult, since its input is of type `Error`. This means that we'll have to parse the `string` at `error.message`, which seems like a brittle solution. What if we forget to handle a case or misspell something?
+As it stands, implementing `handleErrors` is difficult, since its input is of type `Error`. This means that we'll have to parse the `string` at `error.message`.
+
+```ts
+const handleErrors = (errors: Error): T.Task<string> => {
+  const message: string = ...
+  if (errors.message.includes('parse')) {
+    return T.of(`Parse error: ${message}`)
+  } else if (errors.message.includes('network')) {
+    return T.of(`Network error: ${message}`)
+  }
+  return T.of('can never happen')
+}
+```
+
+This is a brittle solution. What if we forget to handle a case or misspell something? And why should we have to handle a case that can never happen?
 
 # Union types to the rescue!
 
