@@ -47,7 +47,7 @@ fetch('https://jsonplaceholder.typicode.com/todos/1')
 
 ### `catch` is optional
 
-We can do this without a compile time or runtime error.
+This throws a 'rejected Promise not handled' runtime exception.
 
 ```ts
 fetch('http://jsonplaceholder.net/todos/-1') // wrong url
@@ -87,13 +87,13 @@ const safeAsync: Task<Either<Error, Response>> = tryCatch(
 )
 ```
 
-The first parameter is a function that returns a `Promise`. I'll explain why this is a function and not just a `Promise` later.
+The first parameter is a function that returns a `Promise`. I'll explain later why this is a function and not just a `Promise`.
 
 The second parameter forces us to catch the errors from the `Promise` from the first parameter. The potential error is represented as an `unknown` instead of an `any`.
 
 `unknown` is safer than `any` because `unknown` forces us to [narrow the type](https://43081j.com/2019/02/typescript-avoid-using-any). In this case, we're narrowing with `instanceof`.
 
-Check out that return type. Our `Task` will return something called an `Either`. An `Either` is either an error value or a success value, but never both. We call the error value `Left` and the success value `Right` [by convention](https://hackage.haskell.org/package/base-4.14.0.0/docs/Data-Either.html). Here's the [definition](https://github.com/gcanti/fp-ts/blob/a5f06e7172eab0fe36ea72ae19263e2d78cc3200/src/Either.ts#L63) of Either:
+Check out that return type. Our `Task` will resolve into a value called an `Either`. An `Either` value is either an error value or a success value, but never both. We call the error value `Left` and the success value `Right` [by convention](https://hackage.haskell.org/package/base-4.14.0.0/docs/Data-Either.html). Here's the [definition](https://github.com/gcanti/fp-ts/blob/a5f06e7172eab0fe36ea72ae19263e2d78cc3200/src/Either.ts#L63) of Either:
 
 ```ts
 interface Left<E> {
@@ -121,7 +121,7 @@ Compare this with the return type of `fetch`:
 Promise<Response>
 ```
 
-We can see that `fetch` will return a `Response`, but we have no idea what its error type might be. Could it have an error? `Task<Either<Error, Response>>` tells us more about what's going on, and holds us to a contract - we must handle both possibilities.
+We can see that `fetch` will return a `Response`, but we have no idea what its error type might be. Could it even have an error? `Task<Either<Error, Response>>` tells us more about what's going on, and holds us to a contract - we must handle both possibilities.
 
 The combination of `Task` and `Either` is so common, it has a type alias called `TaskEither`[^2]:
 
@@ -160,6 +160,8 @@ const safeAsync: TE.TaskEither<Error, any> = pipe(
 )
 ```
 
+If you're unfamiliar with `pipe` syntax, I recommend Ryan Lee's excellent [Practical Guide to fp-ts](https://rlee.dev/writing/practical-guide-to-fp-ts-part-1).
+
 `TE.chain` is similar to `Promise.prototype.then`.
 
 We must wrap `response.json()` in a `tryCatch` because it's a `Promise`.
@@ -187,7 +189,7 @@ const safeAsync: T.Task<void> = pipe(
 
 `T.map` is also like `Promise.prototype.then`. While `T.chain` means what we must return a `Task`, `T.map` means that we can return anything we like. In this case, we return `void`
 
-`E.fold` lets us do something for both the error case and the success case. In this example, we print simply print them both out to the console, with [appropriate error styling](https://developer.mozilla.org/en-US/docs/Web/API/console#Outputting_text_to_the_console).
+`E.fold` lets us do something for both the error case and the success case. It's a bit like using [both callbacks of `then`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then), except the callbacks' return types have to match. In this example, we print simply print them both out to the console, with [appropriate error styling](https://developer.mozilla.org/en-US/docs/Web/API/console#Outputting_text_to_the_console).
 
 Why is it a rule that we have to use `tryCatch`? Because it's possible to create a `Task` like this:
 
@@ -246,13 +248,19 @@ function later() {
 
 `later` represents a ['lazy' evaluation](https://en.wikipedia.org/wiki/Lazy_evaluation), meaning that the `Promise` will not be run until `later` is called.
 
-Since `Task` is a function, it represents a 'lazy' evaluation of its return value[^4].
+Since `Task` is a function, it represents a 'lazy' evaluation of its return value[^4]. In fact, `later` could be typed as a `Task`
 
-Why do this? Well, the main benefit is that it can be easier to reason about what's actually happening. I'll quote something from an [article about Scala](https://medium.com/@sderosiaux/are-scala-futures-the-past-69bd62b9c001) (warning: paywall) that talks about this:
+```ts
+const later: T.Task<void> = () => {
+  return new Promise(() => console.log('running c'))
+}
+```
+
+Why do this? Well, the main benefit is that it can be easier to reason about what's actually happening. I'll quote an [article about Scala](https://medium.com/@sderosiaux/are-scala-futures-the-past-69bd62b9c001) (warning: paywall) that talks about this:
 
 > "With [Promise], our code acts differently according to where we write our code...A [Promise] doesn’t describe an execution, it executes."
 
-By contrast, `Task` describes an execution rather than executing it. This means that we can manipulate a `Task` with `chain` and `map` as much as we want and pass it around the program secure in the knowledge that it hasn't been called yet. We can also invoke the same `Task` multiple times.
+By contrast, `Task` describes an execution rather than executing it. This means that we can manipulate a `Task` with `chain` and `map` as much as we want and pass it around the program secure in the knowledge that it hasn't been invoked yet. We can also invoke the same `Task` multiple times.
 
 The problem is that sometimes, we forget to invoke `Task`! We can solve this by following rule # 2:
 
@@ -327,7 +335,9 @@ We could come up with a similar set of rules that would make `Promise` safer to 
 
 As I said earlier, the advantage is type-safety. `Promise` sacrifices a lot of safety by using `any` to represent error values. By converting to `Task` and back, we hold ourselves to the contract of whichever type we decide our error should be.
 
-For even more power and specificity, you can use a union type or sum type to represent all of your different possible errors. This can strengthen a project that must handle more than one possible kind of error (probably most projects).
+For even more power and specificity, you can use a union type or sum type to represent all of your different possible errors. This can strengthen a project that handles more than one possible kind of error (probably most projects). If this sounds interesting, check out my next article, [Even More Beautiful API Calls with Sum Types](https://dev.to/anthonyjoeseph/fp-ts-and-even-more-beautiful-api-calls-w-sum-types-53j0)
+
+I'll tell you a secret - pure functional programmers don't have to follow rules #2 and #3. They have a rule of their own - they can never invoke `Task` at all! Sounds impossible, right? If you're curious about this and you have some time on your hands, check out my relevant article [Why is fp-ts TaskEither Like that? - TaskEither vs Fluture](https://dev.to/anthonyjoeseph/taskeither-vs-fluture-4e0n)
 
 # Should I use Task
 
@@ -335,7 +345,7 @@ For even more power and specificity, you can use a union type or sum type to rep
 
 On the flip side, if a project is old and has lots of `Promise`s in it already, it's probably best to store `Promise`s in state and return them from functions, but `Task` can still be useful behind the scenes.
 
-Although the main benefit is error handling, there's also a small benefit of operator readability. `Promise.prototype.then` can return either a `Promise` or some other generic value. The `map` and `chain` operators are separate - `chain` is for returning a `Task`, while `map` is for some other generic value. This makes your code easier to read: you can tell what type of operation is happening from the name of the operator.
+Although the main benefit is error handling, there's also a small benefit of operator readability. `Promise.prototype.then` can return either a `Promise` or some other generic value. The `map` and `chain` operators are separate - `chain` is for returning a `Task`, while `map` is for some other generic value. `fold` is also more specific than `then` - both callbacks must must return the same type. This makes your code easier to read: you can tell a lot about what's happening simply by reading the name of each operator.
 
 # Emotional component
 
@@ -349,11 +359,13 @@ Or maybe you're your own product person because you're working for a small comp
   - https://uxdesign.cc/creating-error-messages-best-practice-in-ux-design-cda3be0f5e16
   - https://medium.com/@m.fomenko/handling-error-codes-right-a-how-to-for-product-managers-6c99a6b9bc3b
 
+It's important to have these conversations so you can recognize which errors are worth keeping track of separately, and which can be smushed together and handled the same way. Maybe most problems can be handled with a simple error popup. This is the advantage of using sum types, which you can read about in [the article I mentioned earlier](https://dev.to/anthonyjoeseph/fp-ts-and-even-more-beautiful-api-calls-w-sum-types-53j0). Sum types can relieve a lot of the burden. The idea is to set what granularity you need early on and to hold yourself to that as you go, modifying when necessary.
+
 # Conclusion
 
 `Task` can be cumbersome compared to `Promise` - conversion is a pain, you have to remember to invoke it, and you have to remember to handle all of its cases.
 
-However, the benefit is a reduction of unexpected errors and an increase in readability. I think this makes `Task` a no-brainer for most projects, whether it's completely integrated, or only used sparingly.
+However, the benefit is a dramatic decrease in bugs and an increase in readability. I think this makes `Task` a no-brainer for most projects, whether it's completely integrated, or only used sparingly.
 
 The rules above can help you use `Task` to its fullest advantage and without fear. Remember:
 
@@ -373,4 +385,6 @@ I hope `Task` leads you toward a bright future of asynchronous safety and securi
 
   > [The term] was coined after they realized [...] that the type of an argument in Algol-60 could be figured out in advance with a little compile-time thought [...] In other words, it had 'already been thought of'; thus it was christened a thunk, which is 'the past tense of "think"'
 
-  Though we may not have the _value_ yet, the _type_ has already been thought of, or "thunk".
+  This refers to the fact that the function has no parameters. [Stephen Huig](https://stackoverflow.com/a/925538/615493):
+
+  > A zero-argument function has no way to change its behavior based on parameters it is called with, since it has no parameters. Therefore the entire operation of the function is set -- it is just waiting to be executed. No more "thought" is required on the part of the computer, all of the "thinking" has been done -- the action is completely "thunk" through.
